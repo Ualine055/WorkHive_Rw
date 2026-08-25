@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card } from "@/components/ui/card"
-import { Briefcase, Search, Building2 } from "lucide-react"
+import { Briefcase, Search, Building2, Eye, EyeOff } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
@@ -20,6 +20,7 @@ export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
   const [role, setRole] = useState<"seeker" | "employer">("seeker")
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
 
   const isSignUp = mode === "sign-up"
 
@@ -119,16 +120,32 @@ export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={8}
-                autoComplete={isSignUp ? "new-password" : "current-password"}
-                placeholder="At least 8 characters"
-              />
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  minLength={8}
+                  autoComplete={isSignUp ? "new-password" : "current-password"}
+                  placeholder="At least 8 characters"
+                  className="pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((shown) => !shown)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  aria-pressed={showPassword}
+                  className="absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
             </div>
 
             {error && (

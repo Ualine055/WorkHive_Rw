@@ -9,7 +9,9 @@
     "lint": "eslint",
     "db:setup": "node scripts/setup-db.mjs",
     "db:migrate-auth": "node scripts/migrate-auth.mjs",
-    "db:seed": "node scripts/seed.mjs"
+    "db:seed": "node scripts/seed.mjs",
+    "db:studio": "drizzle-kit studio",
+    "db:show": "node scripts/show-db.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
@@ -36,6 +38,7 @@
     "@types/pg": "^8.23.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "drizzle-kit": "^0.31.10",
     "eslint": "^9",
     "eslint-config-next": "16.3.2",
     "shadcn": "^4.19.0",
