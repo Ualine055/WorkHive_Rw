@@ -58,6 +58,16 @@ export async function saveSeekerProfile(formData: FormData) {
 
 // ---------------- Company profile ----------------
 
+/** The public company details shown next to a job listing. */
+export async function getCompanyProfileByUserId(userId: string) {
+  const rows = await db
+    .select()
+    .from(companyProfile)
+    .where(eq(companyProfile.userId, userId))
+    .limit(1)
+  return rows[0] ?? null
+}
+
 export async function getCompanyProfile() {
   const user = await requireUser()
   const rows = await db

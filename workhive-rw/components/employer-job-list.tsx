@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Users, MapPin, MoreVertical, Eye, Trash2, Pause, Play } from "lucide-react"
+import { Users, MapPin, MoreVertical, Eye, Pencil, Trash2, Pause, Play } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -88,6 +88,12 @@ export function EmployerJobList({ jobs }: { jobs: Job[] }) {
                     <Link href={`/jobs/${job.id}`}>
                       <Eye className="mr-2 h-4 w-4" />
                       View listing
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href={`/employer/${job.id}/edit`}>
+                      <Pencil className="mr-2 h-4 w-4" />
+                      Edit job
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => toggleStatus(job)} disabled={isPending}>

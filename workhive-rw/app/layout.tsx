@@ -14,24 +14,7 @@ export const metadata: Metadata = {
   title: 'WorkHive — Find Jobs & Hire Talent',
   description:
     'WorkHive connects job seekers with employers. Browse openings, apply with your CV, post jobs, and manage applicants — all in one place.',
-  generator: 'v0.app',
-  icons: {
-    icon: [
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
-    ],
-    apple: '/apple-icon.png',
-  },
+  // Next.js picks up app/favicon.ico automatically.
 }
 
 export const viewport: Viewport = {

@@ -1,7 +1,13 @@
 "use server"
 
 import { db } from "@/lib/db"
-import { user as userTable, job, application } from "@/lib/db/schema"
+import {
+  user as userTable,
+  job,
+  application,
+  companyProfile,
+  seekerProfile,
+} from "@/lib/db/schema"
 import { requireUser } from "@/lib/session"
 import { desc, eq, count } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
@@ -54,8 +60,17 @@ export async function setUserRole(userId: string, role: string) {
 
 export async function deleteUser(userId: string) {
   await requireAdmin()
+
+  // Applications first, so no row is left pointing at a job that is about to go.
+  await db.delete(application).where(eq(application.seekerId, userId))
+  await db.delete(application).where(eq(application.employerId, userId))
+  await db.delete(job).where(eq(job.userId, userId))
+  await db.delete(companyProfile).where(eq(companyProfile.userId, userId))
+  await db.delete(seekerProfile).where(eq(seekerProfile.userId, userId))
   await db.delete(userTable).where(eq(userTable.id, userId))
+
   revalidatePath("/admin")
+  revalidatePath("/jobs")
 }
 
 export async function adminDeleteJob(jobId: number) {

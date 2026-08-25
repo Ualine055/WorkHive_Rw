@@ -17,10 +17,21 @@ export async function SiteHeader() {
           </span>
           <span className="text-lg font-bold tracking-tight text-foreground">Work<span className="text-primary">Hive</span></span>
         </Link>
-        <div className="hidden h-9 max-w-md flex-1 items-center rounded-xl border border-border bg-secondary/60 px-3 text-sm text-muted-foreground md:flex">
-          <Search className="mr-2 h-4 w-4 text-primary" />
-          <span>Search jobs, companies, skills...</span>
-        </div>
+        <form
+          action="/jobs"
+          className="hidden h-9 max-w-md flex-1 items-center rounded-xl border border-border bg-secondary/60 px-3 text-sm md:flex"
+        >
+          <Search className="mr-2 h-4 w-4 shrink-0 text-primary" />
+          <label htmlFor="header-search" className="sr-only">
+            Search jobs
+          </label>
+          <input
+            id="header-search"
+            name="q"
+            placeholder="Search jobs, companies, skills..."
+            className="w-full bg-transparent outline-none placeholder:text-muted-foreground"
+          />
+        </form>
         <nav className="ml-auto hidden items-center gap-1 md:flex">
           <Button asChild variant="ghost" size="sm"><Link href="/jobs"><Compass className="mr-2 h-4 w-4 text-primary" />Explore jobs</Link></Button>
           {user && <Button asChild variant="ghost" size="sm"><Link href={dashboardHref}>Dashboard</Link></Button>}

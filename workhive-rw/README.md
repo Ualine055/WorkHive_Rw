@@ -58,6 +58,22 @@ After `npm run db:seed`, password `Passw0rd!23`:
 Roles are stored on the `user` row. `/redirect` reads the role after sign-in and
 sends each person to their own dashboard.
 
+### What each role can do
+
+| | Seeker | Employer | Admin |
+| --- | --- | --- | --- |
+| Browse and search jobs | yes | yes | yes |
+| Apply, then withdraw while still pending | yes | — | — |
+| Keep a profile and CV on file | yes | — | — |
+| Post, edit, close, and delete own jobs | — | yes | any job |
+| Review applicants and set their status | — | yes | — |
+| Publish a company profile shown on its listings | — | yes | — |
+| Change any user's role, or delete a user | — | — | yes |
+
+Every action in `app/actions/` re-checks the signed-in user, so a role cannot be
+bypassed by calling an action directly — `requireJobOwner()` in `actions/jobs.ts` is
+the shared check for anything that modifies a listing.
+
 ## Database scripts
 
 | Command | What it does |

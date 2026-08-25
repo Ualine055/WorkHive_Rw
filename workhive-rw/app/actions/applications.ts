@@ -98,6 +98,16 @@ export async function getApplicantsForJob(jobId: number) {
     .orderBy(desc(application.createdAt))
 }
 
+export async function withdrawApplication(id: number) {
+  const user = await requireUser()
+
+  await db
+    .delete(application)
+    .where(and(eq(application.id, id), eq(application.seekerId, user.id)))
+
+  revalidatePath("/dashboard")
+}
+
 export async function updateApplicationStatus(id: number, status: string) {
   const user = await requireUser()
   await db

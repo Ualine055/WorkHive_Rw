@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { MapPin, Banknote, Clock, ArrowLeft, CheckCircle2 } from "lucide-react"
+import { MapPin, Banknote, Clock, ArrowLeft, CheckCircle2, Globe } from "lucide-react"
 import { SiteHeader } from "@/components/site-header"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -9,7 +9,7 @@ import { Separator } from "@/components/ui/separator"
 import { ApplyDialog } from "@/components/apply-dialog"
 import { getJobById } from "@/app/actions/jobs"
 import { hasApplied } from "@/app/actions/applications"
-import { getSeekerProfile } from "@/app/actions/profile"
+import { getSeekerProfile, getCompanyProfileByUserId } from "@/app/actions/profile"
 import { getSessionUser } from "@/lib/session"
 import { formatSalary, timeAgo } from "@/lib/format"
 
@@ -22,6 +22,7 @@ export default async function JobDetailPage({
   const job = await getJobById(Number(id))
   if (!job) notFound()
 
+  const company = await getCompanyProfileByUserId(job.userId)
   const user = await getSessionUser()
   const isSeeker = user?.role === "seeker"
 
@@ -87,6 +88,39 @@ export default async function JobDetailPage({
           <div className="whitespace-pre-line leading-relaxed text-muted-foreground">
             {job.description}
           </div>
+
+          {company && (company.about || company.website || company.location) && (
+            <>
+              <Separator className="my-6" />
+              <h2 className="mb-2 text-lg font-semibold text-foreground">
+                About {company.name}
+              </h2>
+              {company.about && (
+                <p className="whitespace-pre-line leading-relaxed text-muted-foreground">
+                  {company.about}
+                </p>
+              )}
+              <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+                {company.location && (
+                  <span className="flex items-center gap-1.5">
+                    <MapPin className="h-4 w-4" />
+                    {company.location}
+                  </span>
+                )}
+                {company.website && (
+                  <a
+                    href={company.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 text-primary hover:underline"
+                  >
+                    <Globe className="h-4 w-4" />
+                    Visit website
+                  </a>
+                )}
+              </div>
+            </>
+          )}
 
           <Separator className="my-6" />
 

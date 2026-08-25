@@ -4,8 +4,10 @@ import { SiteHeader } from "@/components/site-header"
 import { JobFilters } from "@/components/job-filters"
 import { JobCard } from "@/components/job-card"
 import { getJobs } from "@/app/actions/jobs"
+import { JOB_CATEGORIES } from "@/lib/format"
 
-const categories = ["All", "Technology", "Design", "Marketing", "Finance", "Healthcare", "Customer success", "Operations"]
+// "All" clears the filter; the rest must match what employers can pick.
+const categories = ["All", ...JOB_CATEGORIES]
 
 export default async function JobsPage({ searchParams }: { searchParams: Promise<{ q?: string; location?: string; type?: string; category?: string }> }) {
   const sp = await searchParams

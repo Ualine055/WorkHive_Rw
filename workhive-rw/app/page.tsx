@@ -5,8 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { getJobs } from "@/app/actions/jobs"
 import { JobCard } from "@/components/job-card"
-
-const categories = ["Technology", "Design", "Marketing", "Finance", "Healthcare", "Customer success"]
+import { JOB_CATEGORIES } from "@/lib/format"
 
 export default async function HomePage() {
   const jobs = await getJobs()
@@ -23,7 +22,7 @@ export default async function HomePage() {
             <label className="flex flex-1 items-center gap-2 rounded-xl bg-secondary/60 px-3"><MapPin className="h-5 w-5 text-primary" /><span className="sr-only">Search location</span><input name="location" className="h-11 w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground" placeholder="Location or remote" /></label>
             <Button type="submit" size="lg" className="rounded-xl"><Search className="mr-2 h-4 w-4" />Search jobs</Button>
           </form>
-          <div className="mt-5 flex flex-wrap gap-2 text-xs text-muted-foreground"><span>Popular:</span>{categories.slice(0, 4).map((category) => <Link key={category} href={`/jobs?category=${encodeURIComponent(category)}`} className="font-medium text-primary hover:underline">{category}</Link>)}</div>
+          <div className="mt-5 flex flex-wrap gap-2 text-xs text-muted-foreground"><span>Popular:</span>{JOB_CATEGORIES.slice(0, 4).map((category) => <Link key={category} href={`/jobs?category=${encodeURIComponent(category)}`} className="font-medium text-primary hover:underline">{category}</Link>)}</div>
         </div>
         <div className="relative hidden min-h-[330px] lg:block"><div className="absolute right-4 top-8 w-72 rotate-2 rounded-3xl border border-border bg-primary p-6 text-primary-foreground directory-shadow"><div className="flex items-center justify-between"><span className="rounded-xl bg-primary-foreground/15 p-3"><BriefcaseBusiness className="h-6 w-6" /></span><span className="rounded-full bg-accent px-2.5 py-1 text-xs font-bold text-accent-foreground">Live now</span></div><p className="mt-10 text-sm text-primary-foreground/75">Open opportunities</p><p className="mt-1 text-5xl font-bold">{jobs.length}</p><p className="mt-4 text-sm text-primary-foreground/80">Roles from companies building what is next.</p></div><div className="absolute bottom-5 left-2 w-64 -rotate-3 rounded-3xl border border-border bg-card p-5 directory-shadow"><div className="flex items-center gap-3"><span className="flex h-11 w-11 items-center justify-center rounded-xl bg-accent text-accent-foreground"><Users className="h-5 w-5" /></span><div><p className="text-sm font-semibold">People-first hiring</p><p className="text-xs text-muted-foreground">Built for real connection</p></div></div><div className="mt-5 flex -space-x-2"><span className="h-8 w-8 rounded-full border-2 border-card bg-primary/30" /><span className="h-8 w-8 rounded-full border-2 border-card bg-accent" /><span className="h-8 w-8 rounded-full border-2 border-card bg-chart-4" /><span className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-card bg-secondary text-[10px] font-bold">+2k</span></div></div></div>
       </div>

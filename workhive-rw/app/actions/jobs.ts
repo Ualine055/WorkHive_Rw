@@ -95,23 +95,64 @@ export async function createJob(formData: FormData) {
   revalidatePath("/jobs")
 }
 
+/** Throws unless the signed-in user posted this job (admins may touch any job). */
+async function requireJobOwner(id: number, user: { id: string; role: string }) {
+  const rows = await db
+    .select({ userId: job.userId })
+    .from(job)
+    .where(eq(job.id, id))
+    .limit(1)
+
+  if (!rows[0]) throw new Error("Job not found")
+  if (user.role !== "admin" && rows[0].userId !== user.id) {
+    throw new Error("You can only change your own jobs")
+  }
+}
+
+export async function updateJob(id: number, formData: FormData) {
+  const user = await requireUser()
+  await requireJobOwner(id, user)
+
+  await db
+    .update(job)
+    .set({
+      companyName: String(formData.get("companyName") || user.name),
+      title: String(formData.get("title")),
+      description: String(formData.get("description")),
+      location: String(formData.get("location")),
+      type: String(formData.get("type") || "Full-time"),
+      category: String(formData.get("category") || "Other"),
+      salaryMin: formData.get("salaryMin") ? Number(formData.get("salaryMin")) : null,
+      salaryMax: formData.get("salaryMax") ? Number(formData.get("salaryMax")) : null,
+      updatedAt: new Date(),
+    })
+    .where(eq(job.id, id))
+
+  revalidatePath("/employer")
+  revalidatePath("/jobs")
+  revalidatePath(`/jobs/${id}`)
+}
+
 export async function updateJobStatus(id: number, status: string) {
   const user = await requireUser()
+  await requireJobOwner(id, user)
+
   await db
     .update(job)
     .set({ status, updatedAt: new Date() })
-    .where(and(eq(job.id, id), eq(job.userId, user.id)))
+    .where(eq(job.id, id))
+
   revalidatePath("/employer")
   revalidatePath("/jobs")
 }
 
 export async function deleteJob(id: number) {
   const user = await requireUser()
-  const isAdmin = user.role === "admin"
-  await db
-    .delete(job)
-    .where(isAdmin ? eq(job.id, id) : and(eq(job.id, id), eq(job.userId, user.id)))
+  await requireJobOwner(id, user)
+
   await db.delete(application).where(eq(application.jobId, id))
+  await db.delete(job).where(eq(job.id, id))
+
   revalidatePath("/employer")
   revalidatePath("/jobs")
   revalidatePath("/admin")

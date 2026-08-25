@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { getSessionUser } from "@/lib/session"
 import { getMyApplications } from "@/app/actions/applications"
+import { WithdrawButton } from "@/components/withdraw-button"
 import { timeAgo, STATUS_STYLES } from "@/lib/format"
 import { seekerNav } from "./nav"
 
@@ -80,9 +81,12 @@ export default async function SeekerDashboard() {
                     <span>Applied {timeAgo(app.createdAt)}</span>
                   </div>
                 </div>
-                <Badge className={`capitalize ${STATUS_STYLES[app.status] ?? ""}`}>
-                  {app.status}
-                </Badge>
+                <div className="flex flex-col items-end gap-2">
+                  <Badge className={`capitalize ${STATUS_STYLES[app.status] ?? ""}`}>
+                    {app.status}
+                  </Badge>
+                  {app.status === "pending" && <WithdrawButton applicationId={app.id} />}
+                </div>
               </div>
             </Card>
           ))}
