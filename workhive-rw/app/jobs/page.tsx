@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Award, BriefcaseBusiness, Building2, CheckCircle2, Compass, Link2, SearchX, Sparkles, Trophy } from "lucide-react"
+import { Award, Building2, CheckCircle2, Compass, Link2, SearchX, Sparkles, Trophy } from "lucide-react"
 import { SiteHeader } from "@/components/site-header"
 import { JobFilters } from "@/components/job-filters"
 import { JobCard } from "@/components/job-card"

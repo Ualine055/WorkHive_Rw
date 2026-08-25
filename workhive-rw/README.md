@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# WorkHive
 
-## Getting Started
+A job board connecting job seekers with employers. Seekers browse openings, keep a
+profile and CV on file, and apply; employers post roles and manage applicants; an
+admin can manage every user and listing.
 
-First, run the development server:
+Built with Next.js 16 (App Router), PostgreSQL via Drizzle ORM, Better Auth, and
+Tailwind CSS v4.
+
+## Running it
+
+You need Node.js 20+ and a PostgreSQL database. The project is currently pointed at
+a free Neon database.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run db:setup    # create the tables (safe to re-run)
+npm run dev         # http://localhost:3001
+npm run db:seed     # optional: demo accounts + sample jobs (dev server must be running)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Environment
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Settings live in `.env.local`, which is gitignored and must not be committed.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Variable | Purpose |
+| --- | --- |
+| `DATABASE_URL` | PostgreSQL connection string |
+| `BETTER_AUTH_SECRET` | Signs session cookies. Any long random string. |
+| `BETTER_AUTH_URL` | Where the app is served from — must match the port |
+| `BLOB_READ_WRITE_TOKEN` | Optional. Without it, CV uploads are saved to `public/uploads` instead of Vercel Blob. |
 
-## Learn More
+If you change the dev port, change `BETTER_AUTH_URL` to match, or sign-in will be
+rejected as a cross-origin request.
 
-To learn more about Next.js, take a look at the following resources:
+### Demo accounts
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+After `npm run db:seed`, password `Passw0rd!23`:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Role | Email |
+| --- | --- |
+| Employer | `employer@workhive.test` |
+| Job seeker | `seeker@workhive.test` |
+| Admin | `admin@workhive.test` |
 
-## Deploy on Vercel
+## How it fits together
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| Path | Contents |
+| --- | --- |
+| `app/` | Pages. `jobs/` is public; `dashboard/` is for seekers, `employer/` for employers, `admin/` for admins. |
+| `app/actions/` | Server actions — every database read and write goes through here. |
+| `app/api/auth/[...all]/` | Better Auth handler. Must stay a catch-all route. |
+| `lib/db/schema.ts` | Drizzle table definitions. |
+| `lib/session.ts` | `getSessionUser()` / `requireUser()` for auth checks in pages and actions. |
+| `components/ui/` | Base UI primitives styled with Tailwind. |
+| `scripts/` | Database setup, auth migration, and seed scripts. |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Roles are stored on the `user` row. `/redirect` reads the role after sign-in and
+sends each person to their own dashboard.
+
+## Database scripts
+
+| Command | What it does |
+| --- | --- |
+| `npm run db:setup` | Creates all tables and indexes. Idempotent. |
+| `npm run db:migrate-auth` | Adds columns a newer Better Auth release expects. Run after upgrading `better-auth`. |
+| `npm run db:seed` | Creates demo accounts and sample job listings. |
+
+## Deploying
+
+Push to GitHub, import the repository in Vercel, and set `DATABASE_URL`,
+`BETTER_AUTH_SECRET`, and `BETTER_AUTH_URL` (your deployed URL) as environment
+variables. Add `BLOB_READ_WRITE_TOKEN` if you want CV uploads stored in Vercel Blob
+— on Vercel the local filesystem is read-only, so uploads need it there.

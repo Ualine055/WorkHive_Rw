@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { MapPin, Briefcase, Banknote, Clock, ArrowLeft, CheckCircle2 } from "lucide-react"
+import { MapPin, Banknote, Clock, ArrowLeft, CheckCircle2 } from "lucide-react"
 import { SiteHeader } from "@/components/site-header"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"

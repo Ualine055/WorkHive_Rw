@@ -2,8 +2,8 @@
 
 import { db } from "@/lib/db"
 import { job, application } from "@/lib/db/schema"
-import { getSessionUser, requireUser } from "@/lib/session"
-import { and, desc, eq, ilike, or, count, sql } from "drizzle-orm"
+import { requireUser } from "@/lib/session"
+import { and, desc, eq, ilike, or, count } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
 
 export type JobFilters = {

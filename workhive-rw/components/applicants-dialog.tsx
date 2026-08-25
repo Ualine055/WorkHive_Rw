@@ -48,16 +48,27 @@ export function ApplicantsDialog({
   onOpenChange: (open: boolean) => void
 }) {
   const [applicants, setApplicants] = useState<Applicant[]>([])
-  const [loading, setLoading] = useState(true)
+  const [loadedJobId, setLoadedJobId] = useState<number | null>(null)
   const [, startTransition] = useTransition()
+
+  const loading = loadedJobId !== jobId
 
   useEffect(() => {
     if (!open) return
-    setLoading(true)
+    let cancelled = false
     getApplicantsForJob(jobId)
-      .then((data) => setApplicants(data as Applicant[]))
-      .catch(() => toast.error("Could not load applicants"))
-      .finally(() => setLoading(false))
+      .then((data) => {
+        if (!cancelled) setApplicants(data as Applicant[])
+      })
+      .catch(() => {
+        if (!cancelled) toast.error("Could not load applicants")
+      })
+      .finally(() => {
+        if (!cancelled) setLoadedJobId(jobId)
+      })
+    return () => {
+      cancelled = true
+    }
   }, [open, jobId])
 
   function changeStatus(id: number, status: string) {
