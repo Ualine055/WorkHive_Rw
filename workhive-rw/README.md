@@ -29,6 +29,7 @@ Settings live in `.env.local`, which is gitignored and must not be committed.
 | `BETTER_AUTH_SECRET` | Signs session cookies. Any long random string. |
 | `BETTER_AUTH_URL` | Where the app is served from — must match the port |
 | `BLOB_READ_WRITE_TOKEN` | Optional. Without it, CV uploads are saved to `public/uploads` instead of Vercel Blob. |
+| `SMTP_USER` / `SMTP_PASSWORD` | Optional. Without them, emails are printed to the terminal instead of being sent. |
 
 If you change the dev port, change `BETTER_AUTH_URL` to match, or sign-in will be
 rejected as a cross-origin request.
@@ -73,6 +74,38 @@ sends each person to their own dashboard.
 Every action in `app/actions/` re-checks the signed-in user, so a role cannot be
 bypassed by calling an action directly — `requireJobOwner()` in `actions/jobs.ts` is
 the shared check for anything that modifies a listing.
+
+## Email notifications
+
+WorkHive emails people at the address they registered with:
+
+- **Welcome email** when an account is created, with different next steps for a job
+  seeker and an employer.
+- **Sign-in alert** on each later sign-in, so unexpected access gets noticed.
+
+Both are sent from `lib/email.ts` and triggered by Better Auth's `databaseHooks` in
+`lib/auth.ts` — nothing in the pages or actions has to remember to send them.
+
+**Without SMTP credentials the app still works**: each email is printed to the
+terminal instead of being sent, so you can see exactly what would go out.
+
+### Sending real email with Gmail
+
+1. Turn on 2-Step Verification at <https://myaccount.google.com/security>
+2. Create an App Password at <https://myaccount.google.com/apppasswords> — pick
+   "Mail", and Google gives you 16 characters
+3. Put them in `.env.local`:
+
+   ```
+   SMTP_USER=your.address@gmail.com
+   SMTP_PASSWORD=the16charapppassword
+   SMTP_FROM=WorkHive <your.address@gmail.com>
+   ```
+
+4. Restart the dev server — `.env.local` is only read at startup
+
+Your normal Gmail password will not work; Google requires an App Password for SMTP.
+A send failure is logged and ignored, so a mail problem can never block a sign-up.
 
 ## Database scripts
 

@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { LogOut, LayoutDashboard, User } from "lucide-react"
+import { LogOut, LayoutDashboard, User, UserRound, ChevronDown } from "lucide-react"
 import { authClient } from "@/lib/auth-client"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
@@ -35,6 +35,9 @@ export function UserMenu({
   const dashboardHref =
     role === "admin" ? "/admin" : role === "employer" ? "/employer" : "/dashboard"
 
+  const profileHref =
+    role === "employer" ? "/employer/profile" : role === "seeker" ? "/dashboard/profile" : null
+
   const initials = name
     .split(" ")
     .map((n) => n[0])
@@ -50,12 +53,16 @@ export function UserMenu({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="outline-none">
-        <Avatar className="h-9 w-9 border border-border">
-          <AvatarFallback className="bg-primary text-sm text-primary-foreground">
-            {initials || <User className="h-4 w-4" />}
+      <DropdownMenuTrigger className="flex items-center gap-2 rounded-full border border-border py-1 pr-2.5 pl-1 outline-none transition-colors hover:bg-secondary">
+        <Avatar className="h-7 w-7">
+          <AvatarFallback className="bg-primary text-xs text-primary-foreground">
+            {initials || <User className="h-3.5 w-3.5" />}
           </AvatarFallback>
         </Avatar>
+        <span className="hidden max-w-28 truncate text-sm font-medium sm:inline">
+          {name.split(" ")[0]}
+        </span>
+        <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel className="flex flex-col gap-1">
@@ -72,6 +79,14 @@ export function UserMenu({
             Dashboard
           </Link>
         </DropdownMenuItem>
+        {profileHref && (
+          <DropdownMenuItem asChild>
+            <Link href={profileHref} className="cursor-pointer">
+              <UserRound className="mr-2 h-4 w-4" />
+              My profile
+            </Link>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-destructive focus:text-destructive">
           <LogOut className="mr-2 h-4 w-4" />
