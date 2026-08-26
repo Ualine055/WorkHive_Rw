@@ -11,7 +11,8 @@
     "db:migrate-auth": "node scripts/migrate-auth.mjs",
     "db:seed": "node scripts/seed.mjs",
     "db:studio": "drizzle-kit studio",
-    "db:show": "node scripts/show-db.mjs"
+    "db:show": "node scripts/show-db.mjs",
+    "email:test": "node scripts/test-email.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
